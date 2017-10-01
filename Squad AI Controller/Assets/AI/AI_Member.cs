@@ -6,12 +6,13 @@ using UnityEngine;
 public class AI_Member : MonoBehaviour {
     public Vector3 goal;
     private NavMeshAgent agent;
-    private NavMeshPath path;
+    //private NavMeshPath path;
 
 	// Use this for initialization
 	void Start () {
+        goal = transform.position;
         agent = GetComponent<NavMeshAgent>();
-        path = new NavMeshPath();
+        //path = new NavMeshPath();
 	}
 	
     public void MoveTo(Vector3 dest)
@@ -20,7 +21,7 @@ public class AI_Member : MonoBehaviour {
         NavMeshHit navHit;
         if (NavMesh.SamplePosition(dest, out navHit, 2.0f, NavMesh.AllAreas))
         {
-            goal = dest;
+            goal = navHit.position;
             agent.destination = goal;
         }
         else
@@ -31,6 +32,6 @@ public class AI_Member : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		
+        Debug.DrawLine(transform.position, goal, Color.red);
 	}
 }

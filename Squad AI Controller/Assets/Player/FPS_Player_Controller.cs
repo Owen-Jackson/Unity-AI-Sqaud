@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FPS_Player_Controller : MonoBehaviour {
     public float moveSpeed = 5.0f;
-    public AI_Member[] squad;
+    public Squad_Controller mySquad;
 
 	// Use this for initialization
 	void Start () {
@@ -31,13 +31,8 @@ public class FPS_Player_Controller : MonoBehaviour {
         if (Physics.Raycast(ray, out hit))
         {          
             if (hit.collider != null)
-            { 
-                Debug.Log("hit!");
-                foreach(AI_Member member in squad)
-                {
-                    member.MoveTo(hit.point);
-                    Debug.Log(hit.point);
-                }
+            {
+                mySquad.MoveSquad(hit.point);
             }
         }
     }
