@@ -4,34 +4,27 @@ using UnityEngine.AI;
 using UnityEngine;
 
 public class AI_Member : MonoBehaviour {
-    public Vector3 goal;
+    public GameObject player;
     private NavMeshAgent agent;
-    //private NavMeshPath path;
 
 	// Use this for initialization
 	void Start () {
-        goal = transform.position;
         agent = GetComponent<NavMeshAgent>();
-        //path = new NavMeshPath();
 	}
 	
+    public void MoveTo(Waypoint dest)
+    {
+        agent.destination = dest.transform.position;
+        dest.SetTaken(true);
+    }
+
     public void MoveTo(Vector3 dest)
     {
-        //Check that the target is reasonably reachable
-        NavMeshHit navHit;
-        if (NavMesh.SamplePosition(dest, out navHit, 2.0f, NavMesh.AllAreas))
-        {
-            goal = navHit.position;
-            agent.destination = goal;
-        }
-        else
-        {
-            Debug.Log("not reachable");
-        }
+        agent.destination = dest;
     }
 
 	// Update is called once per frame
 	void Update () {
-        Debug.DrawLine(transform.position, goal, Color.red);
+        Debug.DrawLine(transform.position, agent.destination, Color.red);
 	}
 }

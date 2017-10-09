@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Squad_Member
+  - Cover
+  - Waypoint
   layers:
   - Default
   - TransparentFX

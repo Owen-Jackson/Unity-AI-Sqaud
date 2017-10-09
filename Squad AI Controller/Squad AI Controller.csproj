@@ -79,8 +79,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\AI\AI_Member.cs" />
+    <Compile Include="Assets\AI\Cover.cs" />
     <Compile Include="Assets\AI\Move_To.cs" />
     <Compile Include="Assets\AI\Squad_Controller.cs" />
+    <Compile Include="Assets\AI\Waypoint.cs" />
     <Compile Include="Assets\Player\FPS_Camera.cs" />
     <Compile Include="Assets\Player\FPS_Player_Controller.cs" />
   </ItemGroup>

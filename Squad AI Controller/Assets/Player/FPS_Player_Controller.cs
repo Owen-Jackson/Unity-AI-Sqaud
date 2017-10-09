@@ -32,7 +32,16 @@ public class FPS_Player_Controller : MonoBehaviour {
         {          
             if (hit.collider != null)
             {
-                mySquad.MoveSquad(hit.point);
+                if (hit.transform.tag == "Cover")
+                {
+                    mySquad.MoveSquad(hit.point, hit.transform.gameObject);
+                    Debug.Log("send to cover");
+                }
+                else
+                {
+                    mySquad.MoveSquad(hit.point);
+                    Debug.Log("send to point");
+                }
             }
         }
     }
