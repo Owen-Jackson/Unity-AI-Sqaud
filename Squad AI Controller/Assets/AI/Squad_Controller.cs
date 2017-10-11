@@ -32,7 +32,7 @@ public class Squad_Controller : MonoBehaviour {
         {
             dest = navHit.position;
             //find waypoints near target
-            Collider[] hitColliders = Physics.OverlapSphere(dest, 5.0f);
+            Collider[] hitColliders = Physics.OverlapSphere(dest, 3.0f);
             for (int i = 0; i < hitColliders.Length; ++i)
             {
                 if (hitColliders[i].tag == "Waypoint")

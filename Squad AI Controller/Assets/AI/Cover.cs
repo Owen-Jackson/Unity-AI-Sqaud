@@ -47,7 +47,7 @@ public class Cover : MonoBehaviour {
         float radiusX = transform.localScale.x / 2;
         float radiusZ = transform.localScale.z / 2;
         float angleStep = 360/numPoints;
-        float angle = 0;0
+        float angle = 0;
         NavMeshHit navHit;
 
         for(int i = 0; i < numPoints; ++i)

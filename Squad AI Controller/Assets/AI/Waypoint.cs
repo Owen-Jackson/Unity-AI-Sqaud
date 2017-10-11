@@ -21,15 +21,12 @@ public class Waypoint : MonoBehaviour {
     }
     // Use this for initialization
     void Start () {
+        
         NavMeshHit navHit;
         if(NavMesh.FindClosestEdge(transform.position, out navHit, NavMesh.AllAreas))
         {
             transform.position = navHit.position;
         }
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+        
 	}
 }
