@@ -7,8 +7,8 @@ public class CoverCreate : MonoBehaviour {
     public Vector3 GridSize = Vector3.zero;
     public float detail = 1;
     public List<GameObject> levelObjects;
-    public List<GameObject> CoverPoints;
-    public List<GameObject> FinalPoints;
+    public List<GameObject> coverPoints;
+    public List<GameObject> finalPoints;
     public GameObject level;
     public Vector3 origin;
     private GameObject goPrefab;
@@ -16,7 +16,7 @@ public class CoverCreate : MonoBehaviour {
     // Use this for initialization
     void Start () {
         goPrefab = Resources.Load("Prefabs/Go") as GameObject;
-        CoverPoints = new List<GameObject>();
+        coverPoints = new List<GameObject>();
         //origin = level.GetComponent<Collider>().bounds.min;
         GetLevel();
         points2();
@@ -50,7 +50,8 @@ public class CoverCreate : MonoBehaviour {
         {
             for (int i = 0; i < levelObjects.Count; ++i)
             {
-                GeneratePoints(levelObjects[i].GetComponent<Renderer>().bounds.min, levelObjects[i].GetComponent<Renderer>().bounds.max);
+                GeneratePoints(levelObjects[i]);
+                //GeneratePoints(levelObjects[i].GetComponent<Renderer>().bounds.min, levelObjects[i].GetComponent<Renderer>().bounds.max);
             }
         }
     }
@@ -76,7 +77,7 @@ public class CoverCreate : MonoBehaviour {
                         {
                             if (NavMesh.FindClosestEdge(pos, out navHit, NavMesh.AllAreas))
                             {
-                                CoverPoints.Add(Instantiate(goPrefab, navHit.position, Quaternion.identity));
+                                coverPoints.Add(Instantiate(goPrefab, navHit.position, Quaternion.identity));
                             }
 
                     }
@@ -86,6 +87,50 @@ public class CoverCreate : MonoBehaviour {
         
         Debug.Log("points generated");
     }
+
+    
+    void GeneratePoints(GameObject obj)
+    {
+        Collider col = obj.GetComponent<Collider>();
+        Vector3 right = obj.transform.right;
+        Vector3 forw = obj.transform.forward;
+        Vector3 min = obj.transform.position -(right * (obj.transform.localScale.x / 2)) - (forw * (obj.transform.localScale.z/2)) -right/2 - forw/2;
+        Vector3 max = col.bounds.max + right + forw;
+        Vector3 pivot = min;        
+        Debug.DrawLine(min, max, Color.cyan, 10f);
+        Vector3 pos = min;
+        NavMeshHit navHit;
+
+        for (float i = 0; i < obj.transform.localScale.z + 2; i++)
+        {
+            //commented out y axis for now so that points only generate on 2D grid 
+            //for (int j = 0; j < yDiff; j++)
+            //{
+            //Vector3 z = i * forw;
+            for (float k = 0; k< obj.transform.localScale.x + 2;k++)
+            {
+                //Vector3 x = k * right;
+                //go back to the origin                
+                //create cover point
+                pos = min;
+                pos.x += k;
+                pos.z += i;
+                
+                if (NavMesh.SamplePosition(pos, out navHit, 2.0f, NavMesh.AllAreas))
+                {
+                    if (NavMesh.FindClosestEdge(navHit.position, out navHit, NavMesh.AllAreas))
+                    {
+                        coverPoints.Add(Instantiate(goPrefab, pos, Quaternion.identity));
+                        coverPoints[coverPoints.Count - 1].transform.RotateAround(pivot, obj.transform.up, obj.transform.rotation.eulerAngles.y);
+                    }
+                }
+                //}
+            }
+        }
+        
+        //Debug.Log("points generated");
+    }
+    
 
     void GeneratePoints(Vector3 min, Vector3 max)
     {
@@ -111,7 +156,7 @@ public class CoverCreate : MonoBehaviour {
                 {
                     if (NavMesh.FindClosestEdge(navHit.position, out navHit, NavMesh.AllAreas))
                     {
-                        CoverPoints.Add(Instantiate(goPrefab, navHit.position, Quaternion.identity));
+                        coverPoints.Add(Instantiate(goPrefab, navHit.position, Quaternion.identity));
                     }
                 }
                 //}
