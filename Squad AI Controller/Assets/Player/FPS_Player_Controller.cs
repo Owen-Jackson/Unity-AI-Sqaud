@@ -5,6 +5,7 @@ using UnityEngine;
 public class FPS_Player_Controller : MonoBehaviour {
     public float moveSpeed = 5.0f;
     public Squad_Controller mySquad;
+    public List<GameObject> nearbyPoints;
 
 	// Use this for initialization
 	void Start () {
@@ -32,12 +33,6 @@ public class FPS_Player_Controller : MonoBehaviour {
         {          
             if (hit.collider != null)
             {
-                if (hit.transform.tag == "Cover")
-                {
-                    mySquad.MoveSquad(hit.point, hit.transform.gameObject);
-                    Debug.Log("send to cover");
-                }
-                else
                 {
                     mySquad.MoveSquad(hit.point);
                     Debug.Log("send to point");
@@ -58,4 +53,28 @@ public class FPS_Player_Controller : MonoBehaviour {
             MoveHereCommand();
         }
 	}
+
+    //Add waypoints to nearby list
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Waypoint")
+        {
+            if (!nearbyPoints.Contains(other.gameObject))
+            {
+                nearbyPoints.Add(other.gameObject);
+            }
+        }
+    }
+
+    //Remove waypoints from the nearby list
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.tag == "Waypoint")
+        {
+            if (nearbyPoints.Contains(other.gameObject))
+            {
+                nearbyPoints.Remove(other.gameObject);
+            }
+        }
+    }
 }

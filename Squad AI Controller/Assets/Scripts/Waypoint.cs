@@ -6,6 +6,7 @@ using UnityEngine.AI;
 public class Waypoint : MonoBehaviour {
     public float score;
     public bool taken = false;
+    public OffMeshLink myLink;
 
     public void SetTaken(bool setting)
     {
@@ -19,14 +20,17 @@ public class Waypoint : MonoBehaviour {
             taken = false;
         }
     }
+
+    public void SetOffMeshLink(GameObject target)
+    {
+        myLink.startTransform = transform;
+        myLink.endTransform = target.transform;
+        myLink.biDirectional = true;
+    }
+
     // Use this for initialization
-    void Start () {
-        /*
-        NavMeshHit navHit;
-        if(NavMesh.FindClosestEdge(transform.position, out navHit, NavMesh.AllAreas))
-        {
-            transform.position = navHit.position;
-        }
-        */
+    void Awake () {
+        myLink = GetComponent<OffMeshLink>();
+        myLink.autoUpdatePositions = true;
 	}
 }

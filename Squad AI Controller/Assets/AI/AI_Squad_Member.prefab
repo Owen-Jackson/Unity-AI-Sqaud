@@ -22,10 +22,11 @@ GameObject:
   - component: {fileID: 33814882844731240}
   - component: {fileID: 65038354710282008}
   - component: {fileID: 23029678772177440}
+  - component: {fileID: 114461396895276844}
   - component: {fileID: 195994128158372780}
   - component: {fileID: 54906360713922188}
-  - component: {fileID: 114461396895276844}
-  m_Layer: 0
+  - component: {fileID: 135542502800584072}
+  m_Layer: 2
   m_Name: AI_Squad_Member
   m_TagString: Squad_Member
   m_Icon: {fileID: 0}
@@ -39,7 +40,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1532658728530090}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.24701, y: 1, z: -15.806448}
+  m_LocalPosition: {x: -9.98, y: 1, z: -20.19}
   m_LocalScale: {x: 1, y: 2, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -123,7 +124,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
-  currentGoal: {fileID: 0}
+  myController: {fileID: 0}
+  maxDistanceFromPlayer: 5
+  nearbyPoints: []
+  currentWaypoint: {fileID: 0}
+  scoresList: []
+  currentIndex: 0
+  agent: {fileID: 0}
+  distFromCentre: 0
+--- !u!135 &135542502800584072
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1532658728530090}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 8
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!195 &195994128158372780
 NavMeshAgent:
   m_ObjectHideFlags: 1
@@ -133,9 +153,9 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 1
-  m_Speed: 3.5
+  m_Speed: 4
   m_Acceleration: 8
-  avoidancePriority: 50
+  avoidancePriority: 99
   m_AngularSpeed: 120
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1

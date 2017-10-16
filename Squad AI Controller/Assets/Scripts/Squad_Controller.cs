@@ -7,7 +7,7 @@ public class Squad_Controller : MonoBehaviour {
     public AI_Member[] squad;
     public Vector3 averageSquadPos;
     public float minSeparation = 2;
-    public float maxSeparation = 5;
+    public float maxSeparation = 20;
 
      // Use this for initialization
     void Start () {
@@ -19,6 +19,7 @@ public class Squad_Controller : MonoBehaviour {
             foreach(AI_Member member in squad)
             {
                 avg += member.transform.position;
+                member.myController = this;
             }
             averageSquadPos = avg / squad.Length;
         }
@@ -32,13 +33,16 @@ public class Squad_Controller : MonoBehaviour {
         {
             dest = navHit.position;
             //find waypoints near target
-            Collider[] hitColliders = Physics.OverlapSphere(dest, 3.0f);
+            Collider[] hitColliders = Physics.OverlapSphere(dest, 5.0f, 1<<8);
             for (int i = 0; i < hitColliders.Length; ++i)
             {
                 if (hitColliders[i].tag == "Waypoint")
                 {
-                    points.Add(hitColliders[i].gameObject);
-                    Debug.Log(points.Count);
+                    if (!Physics.Linecast(hitColliders[i].transform.position, navHit.position))
+                    {
+                        points.Add(hitColliders[i].gameObject);
+                        Debug.Log(points.Count);
+                    }
                 }
             }
             switch(points.Count)
@@ -55,34 +59,27 @@ public class Squad_Controller : MonoBehaviour {
             }
         }
     }
-
-	public void MoveSquad(Vector3 dest, GameObject obj)
-    {
-        //create an area of possible positions to move to
-        List<GameObject> points = obj.GetComponent<Cover>().coverPoints;
-        NavMeshHit navHit;
-        if (NavMesh.SamplePosition(dest, out navHit, 2.0f, NavMesh.AllAreas))
-        {
-            dest = navHit.position;
-            SendMultipleWaypoints(dest, points);
-        }
-    }
     
     void SendMultipleWaypoints(Vector3 dest, List<GameObject> points)
     {
         //sort points to get the ones closest to the command loacation
+        
         points.Sort(delegate (GameObject a, GameObject b)
         {
             return Vector3.Distance(dest, a.transform.position).CompareTo(Vector3.Distance(dest, b.transform.position));
         });
-        Debug.Log("list length: " + points.Count.ToString());
+
         //move each member in the squad to their points
         int count = 0;
         foreach (AI_Member member in squad)
         {
+            if(count > points.Count-1)
+            {
+                break;
+            }
             if (points[count].GetComponent<Waypoint>().taken == false)
             {
-                member.MoveTo(points[count].GetComponent<Waypoint>());
+                member.MoveTo(points[count]);
             }
             ++count;
         }
@@ -99,6 +96,7 @@ public class Squad_Controller : MonoBehaviour {
                 agentToSend = member;
             }
         }
+        Debug.Log("send to one");
         agentToSend.GetComponent<NavMeshAgent>().destination = waypoint.transform.position;
     }
 
@@ -120,5 +118,9 @@ public class Squad_Controller : MonoBehaviour {
             avg += member.transform.position;
         }
         averageSquadPos = avg / squad.Length;
+        foreach (AI_Member member in squad)
+        {
+            member.distFromCentre = Vector3.Distance(member.transform.position, avg);
+        }
     }
 }
