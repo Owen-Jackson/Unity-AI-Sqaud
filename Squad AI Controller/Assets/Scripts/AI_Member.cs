@@ -8,7 +8,7 @@ public class AI_Member : MonoBehaviour {
     public Squad_Controller myController;
     public float maxDistanceFromPlayer = 5;
     public List<GameObject> nearbyPoints;
-    //public List<GameObject> knownEnemies;
+    public List<GameObject> nearbyEnemies;
     public GameObject currentWaypoint;
     public List<float> scoresList;
     public int currentIndex;
@@ -20,8 +20,9 @@ public class AI_Member : MonoBehaviour {
 
     // Use this for initialization
     void Start() {
+        myController = transform.parent.GetComponent<Squad_Controller>();
         nearbyPoints = new List<GameObject>();
-        //knownEnemies = new List<GameObject>();
+        nearbyEnemies = new List<GameObject>();
         scoresList = new List<float>();
         agent = GetComponent<NavMeshAgent>();
         obst = GetComponent<NavMeshObstacle>();
@@ -76,7 +77,7 @@ public class AI_Member : MonoBehaviour {
     }
 
     //Used when checking for nearby points to move to
-    void EvaluateNearbyPoints()
+    private void EvaluateNearbyPoints()
     {
         if (nearbyPoints.Count > 0)
         {
@@ -89,7 +90,7 @@ public class AI_Member : MonoBehaviour {
                 scoresList[count] += DistanceEvaluation(waypoint);
 
                 //Enemy LOS check
-                scoresList[count] += LOSEvaluation(waypoint);
+                scoresList[count] += LineOfSightEvaluation(waypoint);
 
                 //General Threat Check
 
@@ -98,9 +99,54 @@ public class AI_Member : MonoBehaviour {
         }
     }
 
-    void MoveToNextBest()
+    public int EvaluateGivenPoints(List<GameObject> points)
     {
+        float bestScore = 0;
+        int bestIndex = 0;
 
+        for(int i = 0; i < points.Count; i++)
+        {
+            if (!points[i].GetComponent<Waypoint>().taken)
+            {
+
+
+                float score = 0;
+                score += DistanceEvaluation(points[i]);
+                score += LineOfSightEvaluation(points[i]);
+
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    bestIndex = i;
+                }
+            }
+        }
+        return bestIndex;
+    }
+
+    private void MoveToNextBest()
+    {
+        int newDest = 0;
+        for (int i = 0; i < nearbyPoints.Count; i++)
+        {
+
+
+            if (!nearbyPoints[i].GetComponent<Waypoint>().taken)
+            {
+                if (scoresList[i] > scoresList[newDest])
+                {
+                    newDest = i;
+                }
+            }
+
+        }
+        MoveTo(nearbyPoints[newDest]);
+    }
+
+    public void MoveToNextBestFromGiven(List<GameObject> points)
+    {
+        int newDest = EvaluateGivenPoints(points);
+        MoveTo(points[newDest]);
     }
 
     float DistanceEvaluation(GameObject waypoint)
@@ -113,24 +159,23 @@ public class AI_Member : MonoBehaviour {
         {
             distance += Vector3.Distance(path.corners[i], path.corners[i + 1]);
         }
-        score = distance;
+        if (distance < 10f)
+        {
+            score = 1 - (distance / 10);
+        }
         return score;
     }
 
-    float LOSEvaluation(GameObject waypoint)
+    float LineOfSightEvaluation(GameObject waypoint)
     {
         float score = 0;
         if (myController.knownEnemies.Count > 0)
         {
             foreach (GameObject enemy in myController.knownEnemies)
             {
-                if (Physics.Linecast(waypoint.transform.position, enemy.transform.position))
+                if (Physics.Linecast(waypoint.transform.position, enemy.transform.position, 1<<9))
                 {
-                    score += 1;
-                }
-                else
-                {
-                    Debug.DrawLine(waypoint.transform.position, enemy.transform.position, Color.magenta, 1.0f);
+                    score += 5;
                 }
             }
         }
@@ -142,7 +187,7 @@ public class AI_Member : MonoBehaviour {
         Debug.DrawLine(transform.position, agent.destination, Color.red);
         EvaluateNearbyPoints();
         currentIndex = nearbyPoints.IndexOf(currentWaypoint);
-        
+
         if(scoresList.Count > 0)
         {
             int bestInd = 0;

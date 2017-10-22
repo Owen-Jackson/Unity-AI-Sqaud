@@ -40,11 +40,11 @@ public class Squad_Controller : MonoBehaviour {
             {
                 if (hitColliders[i].tag == "Waypoint")
                 {
-                    if (!Physics.Linecast(hitColliders[i].transform.position, navHit.position))
-                    {
+                    //if (!Physics.Linecast(hitColliders[i].transform.position, navHit.position))
+                   // {
                         points.Add(hitColliders[i].gameObject);
-                        Debug.Log(points.Count);
-                    }
+                        //Debug.Log(points.Count);
+                    //}
                 }
             }
             switch(points.Count)
@@ -64,7 +64,7 @@ public class Squad_Controller : MonoBehaviour {
     
     void SendMultipleWaypoints(Vector3 dest, List<GameObject> points)
     {
-        //sort points to get the ones closest to the command loacation
+        //sort points to get the ones closest to the command location
         
         points.Sort(delegate (GameObject a, GameObject b)
         {
@@ -79,10 +79,11 @@ public class Squad_Controller : MonoBehaviour {
             {
                 break;
             }
-            if (points[count].GetComponent<Waypoint>().taken == false)
+            member.MoveToNextBestFromGiven(points);
+            /*if (points[count].GetComponent<Waypoint>().taken == false)
             {
                 member.MoveTo(points[count]);
-            }
+            }*/
             ++count;
         }
     }
@@ -112,9 +113,50 @@ public class Squad_Controller : MonoBehaviour {
         }
     }
 
+    void CheckKnownEnemies()
+    {
+        /*
+        //check for enemies to remove
+        if (knownEnemies.Count > 0)
+        {
+            for(int i = 0; i < knownEnemies.Count; i++)
+            {
+                int seenCount = 0;
+                foreach (AI_Member member in squad)
+                {
+                    if (member.nearbyEnemies.Contains(knownEnemies[i]))
+                    {
+                        seenCount++;
+                    }
+                }
+                if (seenCount == 0)
+                {
+                    knownEnemies.Remove(knownEnemies[i]);
+                }
+            }
+        }
+        */
+        //add newly seen enemies
+        foreach(AI_Member member in squad)
+        {
+            if(member.nearbyEnemies.Count > 0)
+            {
+                foreach (GameObject enemy in member.nearbyEnemies)
+                {
+                    if(!knownEnemies.Contains(enemy))
+                    {
+                        knownEnemies.Add(enemy);
+                    }
+                }
+            }
+        }
+    }
+
 	// Update is called once per frame
 	void Update () {
         Vector3 avg = Vector3.zero;
+        CheckKnownEnemies();
+
         foreach (AI_Member member in squad)
         {
             avg += member.transform.position;
