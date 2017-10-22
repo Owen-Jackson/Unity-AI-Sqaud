@@ -42,10 +42,11 @@ public class CoverCreate : MonoBehaviour {
             for (int i = 0; i < levelObjects.Count; ++i)
             {
                 GeneratePoints(levelObjects[i]);
+                //levelObjects[i].AddComponent<Cover>();
             }
         }
     }
-    
+
     void GeneratePoints(GameObject obj)
     {
         obj.AddComponent<Cover>();
@@ -70,13 +71,13 @@ public class CoverCreate : MonoBehaviour {
             {
                 pos = bottomLeft;
                 pos += forw * i;
-                if (Physics.Raycast(pos, right, out rayHit, 2f))
+                if (Physics.Raycast(pos, right, out rayHit, 2f, 1<<9))
                 {
                     if (rayHit.collider.gameObject.tag == "Cover")
                     {
                         if (NavMesh.SamplePosition(pos, out navHit, 2.0f, NavMesh.AllAreas))
                         {
-                            if (NavMesh.FindClosestEdge(navHit.position, out navHit, NavMesh.AllAreas))
+                            //if (NavMesh.FindClosestEdge(navHit.position, out navHit, NavMesh.AllAreas))
                             {
                                 GameObject go = Instantiate(goPrefab, pos, obj.transform.rotation);
                                 go.transform.position = navHit.position;
@@ -96,13 +97,13 @@ public class CoverCreate : MonoBehaviour {
             {
                 pos = bottomLeft;
                 pos += right * i;
-                if (Physics.Raycast(pos, forw, out rayHit, 2f))
+                if (Physics.Raycast(pos, forw, out rayHit, 2f, 1<<9))
                 {
                     if (rayHit.collider.gameObject.tag == "Cover")
                     {
                         if (NavMesh.SamplePosition(pos, out navHit, 2.0f, NavMesh.AllAreas))
                         {
-                            if (NavMesh.FindClosestEdge(navHit.position, out navHit, NavMesh.AllAreas))
+                            //if (NavMesh.FindClosestEdge(navHit.position, out navHit, NavMesh.AllAreas))
                             {
                                 GameObject go = Instantiate(goPrefab, pos, obj.transform.rotation);
                                 go.transform.position = navHit.position;
@@ -122,14 +123,14 @@ public class CoverCreate : MonoBehaviour {
             {
                 pos = topLeft;
                 pos += right * i;
-                if (Physics.Raycast(pos, -forw, out rayHit, 2f))
+                if (Physics.Raycast(pos, -forw, out rayHit, 2f, 1<<9))
                 {
                     if (rayHit.collider.gameObject.tag == "Cover")
                     {
 
                         if (NavMesh.SamplePosition(pos, out navHit, 2.0f, NavMesh.AllAreas))
                         {
-                            if (NavMesh.FindClosestEdge(navHit.position, out navHit, NavMesh.AllAreas))
+                            //if (NavMesh.FindClosestEdge(navHit.position, out navHit, NavMesh.AllAreas))
                             {
                                 GameObject go = Instantiate(goPrefab, pos, obj.transform.rotation);
                                 go.transform.position = navHit.position;
@@ -149,13 +150,13 @@ public class CoverCreate : MonoBehaviour {
             {
                 pos = bottomRight;
                 pos += forw * i;
-                if (Physics.Raycast(pos, -right, out rayHit, 2f))
+                if (Physics.Raycast(pos, -right, out rayHit, 2f, 1<<9))
                 {
                     if (rayHit.collider.gameObject.tag == "Cover")
                     {
                         if (NavMesh.SamplePosition(pos, out navHit, 2.0f, NavMesh.AllAreas))
                         {
-                            if (NavMesh.FindClosestEdge(navHit.position, out navHit, NavMesh.AllAreas))
+                            //if (NavMesh.FindClosestEdge(navHit.position, out navHit, NavMesh.AllAreas))
                             {
                                 GameObject go = Instantiate(goPrefab, pos, obj.transform.rotation);
                                 go.transform.position = navHit.position;
@@ -167,7 +168,7 @@ public class CoverCreate : MonoBehaviour {
                 }
             }
         }
-        obj.GetComponent<Cover>().CreateMantlePoints();
+        //obj.GetComponent<Cover>().CreateMantlePoints();
         //Debug.Log("points generated");
     }
 }

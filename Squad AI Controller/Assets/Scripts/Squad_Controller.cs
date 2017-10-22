@@ -5,11 +5,12 @@ using UnityEngine;
 
 public class Squad_Controller : MonoBehaviour {
     public AI_Member[] squad;
+    public List<GameObject> knownEnemies;
     public Vector3 averageSquadPos;
     public float minSeparation = 2;
     public float maxSeparation = 20;
 
-     // Use this for initialization
+    // Use this for initialization
     void Start () {
         //get squad members to control
         squad = GetComponentsInChildren<AI_Member>();
@@ -23,6 +24,7 @@ public class Squad_Controller : MonoBehaviour {
             }
             averageSquadPos = avg / squad.Length;
         }
+        knownEnemies = new List<GameObject>();
 	}
 
     public void MoveSquad(Vector3 dest)
