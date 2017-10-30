@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Spin : MonoBehaviour {
-
+    public float rotateSpeed = 0.2f;
 	// Use this for initialization
 	void Start () {
 		
@@ -11,6 +11,6 @@ public class Spin : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        transform.Rotate(new Vector3(0,0.2f,0));
+        transform.Rotate(new Vector3(0,rotateSpeed,0));
 	}
 }

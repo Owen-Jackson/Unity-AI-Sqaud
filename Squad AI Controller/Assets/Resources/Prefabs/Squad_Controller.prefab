@@ -52,7 +52,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squad: []
-  targetPosition: {x: 0, y: 0, z: 0}
+  knownEnemies: []
   averageSquadPos: {x: 0, y: 0, z: 0}
   minSeparation: 2
   maxSeparation: 5
+  points: []

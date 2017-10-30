@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine.AI;
 using UnityEngine;
 
-public class CoverCreate : MonoBehaviour {
-    public Vector3 GridSize = Vector3.zero;
+public class CoverCreate : MonoBehaviour
+{
     public float detail = 1;
     public List<GameObject> levelObjects;
     public List<GameObject> coverPoints;
@@ -13,23 +13,24 @@ public class CoverCreate : MonoBehaviour {
     private GameObject goPrefab;
 
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         goPrefab = Resources.Load("Prefabs/Go") as GameObject;
         coverPoints = new List<GameObject>();
         GetLevel();
         GenerateCover();
-	}
+    }
 
     void GetLevel()
     {
         levelObjects = new List<GameObject>();
-        foreach(Transform child in level.GetComponentInChildren<Transform>())
+        foreach (Transform child in level.GetComponentInChildren<Transform>())
         {
             if (child.CompareTag("Cover"))
             {
                 levelObjects.Add(child.gameObject);
             }
-          
+
         }
         Debug.Log(levelObjects.Count + " cover objects in level");
     }
@@ -52,12 +53,12 @@ public class CoverCreate : MonoBehaviour {
         obj.AddComponent<Cover>();
         Vector3 right = obj.transform.right;
         Vector3 forw = obj.transform.forward;
-        Vector3 min = obj.transform.position -(right * (obj.transform.localScale.x / 2)) - (forw * (obj.transform.localScale.z/2)) -right/2 - forw/2;
+        Vector3 min = obj.transform.position - (right * (obj.transform.localScale.x / 2)) - (forw * (obj.transform.localScale.z / 2)) - right / 2 - forw / 2;
         Vector3 max = obj.transform.position + (right * (obj.transform.localScale.x / 2)) + (forw * (obj.transform.localScale.z / 2)) + right / 2 + forw / 2;
         Vector3 bottomLeft = min;
         Vector3 topRight = max;
         Vector3 topLeft = min + (forw * (obj.transform.localScale.z)) + forw;
-        Vector3 bottomRight = max - (forw * (obj.transform.localScale.z)) - forw;      
+        Vector3 bottomRight = max - (forw * (obj.transform.localScale.z)) - forw;
         Debug.DrawLine(min, max, Color.cyan, 10f);
         Vector3 pos = min;
         NavMeshHit navHit;
@@ -65,19 +66,19 @@ public class CoverCreate : MonoBehaviour {
 
         //loop along the edges, raycasting inwards at set intervals
         //bottomleft to topleft
-        for(int i = 0; i < obj.transform.localScale.z + 2; i++)
+        for (int i = 0; i < obj.transform.localScale.z + 2; i++)
         {
             if (i % 2 == 1)
             {
                 pos = bottomLeft;
                 pos += forw * i;
-                if (Physics.Raycast(pos, right, out rayHit, 2f, 1<<9))
+                if (Physics.Raycast(pos, right, out rayHit, 2f, 1 << 9))
                 {
-                    if (rayHit.collider.gameObject.tag == "Cover")
+                    if (rayHit.collider.gameObject == obj)
                     {
                         if (NavMesh.SamplePosition(pos, out navHit, 2.0f, NavMesh.AllAreas))
                         {
-                            //if (NavMesh.FindClosestEdge(navHit.position, out navHit, NavMesh.AllAreas))
+                            if (Physics.OverlapSphere(navHit.position, 0.5f, 1 << LayerMask.NameToLayer("Waypoint")).Length == 0)
                             {
                                 GameObject go = Instantiate(goPrefab, pos, obj.transform.rotation);
                                 go.transform.position = navHit.position;
@@ -97,13 +98,13 @@ public class CoverCreate : MonoBehaviour {
             {
                 pos = bottomLeft;
                 pos += right * i;
-                if (Physics.Raycast(pos, forw, out rayHit, 2f, 1<<9))
+                if (Physics.Raycast(pos, forw, out rayHit, 2f, 1 << 9))
                 {
-                    if (rayHit.collider.gameObject.tag == "Cover")
+                    if (rayHit.collider.gameObject == obj)
                     {
                         if (NavMesh.SamplePosition(pos, out navHit, 2.0f, NavMesh.AllAreas))
                         {
-                            //if (NavMesh.FindClosestEdge(navHit.position, out navHit, NavMesh.AllAreas))
+                            if (Physics.OverlapSphere(navHit.position, 0.5f, 1 << LayerMask.NameToLayer("Waypoint")).Length == 0)
                             {
                                 GameObject go = Instantiate(goPrefab, pos, obj.transform.rotation);
                                 go.transform.position = navHit.position;
@@ -123,14 +124,13 @@ public class CoverCreate : MonoBehaviour {
             {
                 pos = topLeft;
                 pos += right * i;
-                if (Physics.Raycast(pos, -forw, out rayHit, 2f, 1<<9))
+                if (Physics.Raycast(pos, -forw, out rayHit, 2f, 1 << 9))
                 {
-                    if (rayHit.collider.gameObject.tag == "Cover")
+                    if (rayHit.collider.gameObject == obj)
                     {
-
                         if (NavMesh.SamplePosition(pos, out navHit, 2.0f, NavMesh.AllAreas))
                         {
-                            //if (NavMesh.FindClosestEdge(navHit.position, out navHit, NavMesh.AllAreas))
+                            if (Physics.OverlapSphere(navHit.position, 0.5f, 1 << LayerMask.NameToLayer("Waypoint")).Length == 0)
                             {
                                 GameObject go = Instantiate(goPrefab, pos, obj.transform.rotation);
                                 go.transform.position = navHit.position;
@@ -142,7 +142,7 @@ public class CoverCreate : MonoBehaviour {
                 }
             }
         }
-        
+
         //bottomright to topright
         for (int i = 0; i < obj.transform.localScale.z + 2; i++)
         {
@@ -150,13 +150,13 @@ public class CoverCreate : MonoBehaviour {
             {
                 pos = bottomRight;
                 pos += forw * i;
-                if (Physics.Raycast(pos, -right, out rayHit, 2f, 1<<9))
+                if (Physics.Raycast(pos, -right, out rayHit, 2f, 1 << 9))
                 {
-                    if (rayHit.collider.gameObject.tag == "Cover")
+                    if (rayHit.collider.gameObject == obj)
                     {
                         if (NavMesh.SamplePosition(pos, out navHit, 2.0f, NavMesh.AllAreas))
                         {
-                            //if (NavMesh.FindClosestEdge(navHit.position, out navHit, NavMesh.AllAreas))
+                            if (Physics.OverlapSphere(navHit.position, 0.5f, 1 << LayerMask.NameToLayer("Waypoint")).Length == 0)
                             {
                                 GameObject go = Instantiate(goPrefab, pos, obj.transform.rotation);
                                 go.transform.position = navHit.position;

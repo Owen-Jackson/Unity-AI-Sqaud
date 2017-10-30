@@ -6,6 +6,7 @@ public class FPS_Player_Controller : MonoBehaviour {
     public float moveSpeed = 5.0f;
     public Squad_Controller mySquad;
     public List<GameObject> nearbyPoints;
+    private GameObject target = null;
 
 	// Use this for initialization
 	void Start () {
@@ -34,6 +35,14 @@ public class FPS_Player_Controller : MonoBehaviour {
             if (hit.collider != null)
             {
                 {
+                    if (target)
+                    {
+                        target.transform.position = hit.point;
+                    }
+                    else
+                    {
+                        target = Instantiate(Resources.Load("Prefabs/Marker"), hit.point, Quaternion.identity) as GameObject;
+                    }
                     mySquad.MoveSquad(hit.point);
                     Debug.Log("send to point");
                 }

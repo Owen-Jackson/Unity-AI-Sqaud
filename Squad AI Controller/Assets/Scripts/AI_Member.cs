@@ -13,46 +13,21 @@ public class AI_Member : MonoBehaviour {
     public List<float> scoresList;
     public int currentIndex;
     public NavMeshAgent agent;
-    public NavMeshObstacle obst;
     public float distFromCentre = 0;
-    public Vector3 target;
+    private List<GameObject> waypoints = null;
+    private bool commanded = false;
+    private float commandTimer = 0;
+    private float autoTimer = 0;
+    //public Vector3 target;
 
 
     // Use this for initialization
     void Start() {
         myController = transform.parent.GetComponent<Squad_Controller>();
-        nearbyPoints = new List<GameObject>();
+        //nearbyPoints = new List<GameObject>();
         nearbyEnemies = new List<GameObject>();
         scoresList = new List<float>();
         agent = GetComponent<NavMeshAgent>();
-        obst = GetComponent<NavMeshObstacle>();
-    }
-
-    public IEnumerator ToggleAgentState()
-    {
-        if (agent && agent.enabled)
-        {
-            agent.enabled = false;
-
-            yield return new WaitForEndOfFrame();
-
-            if (obst && !obst.enabled)
-            {
-                obst.enabled = true;
-            }
-        }
-        else if (obst && obst.enabled)
-        {
-            obst.enabled = false;
-
-            yield return new WaitForEndOfFrame();
-
-            if(agent && !agent.enabled)
-            {
-                agent.enabled = true;
-                agent.SetDestination(currentWaypoint.transform.position);
-            }
-        }
     }
 
     public void MoveTo(GameObject dest)
@@ -64,6 +39,19 @@ public class AI_Member : MonoBehaviour {
         agent.destination = dest.transform.position;
         currentWaypoint = dest;
         dest.GetComponent<Waypoint>().SetTaken(true);
+        dest.GetComponent<Waypoint>().owner = this.gameObject;
+    }
+
+    public void MoveCommand(List<GameObject> points)
+    {
+        autoTimer = 0;
+        waypoints = points;
+        currentWaypoint = points[0];
+        currentIndex = 0;
+        currentWaypoint.GetComponent<Waypoint>().SetTaken(true);
+        currentWaypoint.GetComponent<Waypoint>().owner = this.gameObject;
+        commanded = true;
+        commandTimer = 0;
     }
 
     public void MoveTo(Vector3 dest)
@@ -86,11 +74,18 @@ public class AI_Member : MonoBehaviour {
             {
                 //reset score before evaluating
                 scoresList[count] = 0;
+
                 //Distance Check
                 scoresList[count] += DistanceEvaluation(waypoint);
 
-                //Enemy LOS check
-                scoresList[count] += LineOfSightEvaluation(waypoint);
+                if (gameObject.layer == LayerMask.NameToLayer("Player_Ally"))
+                {
+                    scoresList[count] += waypoint.GetComponent<Waypoint>().allyScore;
+                }
+                else if (gameObject.layer == LayerMask.NameToLayer("Enemy"))
+                {
+                    scoresList[count] += waypoint.GetComponent<Waypoint>().enemyScore;
+                }
 
                 //General Threat Check
 
@@ -98,55 +93,44 @@ public class AI_Member : MonoBehaviour {
             }
         }
     }
-
-    public int EvaluateGivenPoints(List<GameObject> points)
+    
+    public void MoveToNextBest()
     {
-        float bestScore = 0;
-        int bestIndex = 0;
-
-        for(int i = 0; i < points.Count; i++)
+        EvaluateNearbyPoints();
+        //if commanded search by nearest to command spot
+        if (commanded)
         {
-            if (!points[i].GetComponent<Waypoint>().taken)
+            MoveTo(waypoints[currentIndex + 1]);
+            currentIndex++;
+        }
+        else
+        {
+            int newDest = 0;
+            for (int i = 0; i < nearbyPoints.Count; i++)
             {
-
-
-                float score = 0;
-                score += DistanceEvaluation(points[i]);
-                score += LineOfSightEvaluation(points[i]);
-
-                if (score > bestScore)
+                if (!nearbyPoints[i].GetComponent<Waypoint>().taken)
                 {
-                    bestScore = score;
-                    bestIndex = i;
+                    if(scoresList[i] > scoresList[newDest])
+                    {
+                        newDest = i;
+                    }
                 }
             }
+            MoveTo(nearbyPoints[newDest]);
+            currentIndex = newDest;
         }
-        return bestIndex;
     }
 
-    private void MoveToNextBest()
+    float DistanceFromDest()
     {
-        int newDest = 0;
-        for (int i = 0; i < nearbyPoints.Count; i++)
+        NavMeshPath path = new NavMeshPath();
+        NavMesh.CalculatePath(transform.position, currentWaypoint.transform.position, NavMesh.AllAreas, path);
+        float distance = 0;
+        for (int i = 0; i < path.corners.Length - 1; i++)
         {
-
-
-            if (!nearbyPoints[i].GetComponent<Waypoint>().taken)
-            {
-                if (scoresList[i] > scoresList[newDest])
-                {
-                    newDest = i;
-                }
-            }
-
+            distance += Vector3.Distance(path.corners[i], path.corners[i + 1]);
         }
-        MoveTo(nearbyPoints[newDest]);
-    }
-
-    public void MoveToNextBestFromGiven(List<GameObject> points)
-    {
-        int newDest = EvaluateGivenPoints(points);
-        MoveTo(points[newDest]);
+        return distance;
     }
 
     float DistanceEvaluation(GameObject waypoint)
@@ -185,23 +169,54 @@ public class AI_Member : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         Debug.DrawLine(transform.position, agent.destination, Color.red);
-        EvaluateNearbyPoints();
-        currentIndex = nearbyPoints.IndexOf(currentWaypoint);
-
+        //set commanded back to false after timer or if destination is reached
+        if (commanded)
+        {
+            commandTimer += Time.deltaTime;
+            if(commandTimer > 10f)
+            {
+                commanded = false;
+                commandTimer = 0;
+                MoveToNextBest();
+            }
+            else if(DistanceFromDest() < 1f)
+            {
+                commanded = false;
+                Debug.Log("arrived");
+            }
+        }
+        else
+        {
+            autoTimer += Time.deltaTime;
+            if(autoTimer > 5f)
+            {
+                autoTimer = 0;
+                MoveToNextBest();
+            }
+        }
+        /*
         if(scoresList.Count > 0)
         {
             int bestInd = 0;
-            for(int i = 0; i < scoresList.Count-1;i++)
+            for (int i = 0; i < scoresList.Count - 1; i++)
             {
-                if(scoresList[i+1] > scoresList[i])
+                if (scoresList[i + 1] > scoresList[i])
                 {
-                    bestInd = i+1;
+                    bestInd = i + 1;
                 }
             }
-        }
+        }*/
+
         if (currentWaypoint)
         {
-            target = currentWaypoint.transform.position;
+            //if my waypoint is taken, go to the next nearest. used to avoid multiple NPCs moving to same waypoint
+            if(currentWaypoint.GetComponent<Waypoint>().owner != this.gameObject)
+            {
+                MoveToNextBest();                           
+            }
+            
+            //target = currentWaypoint.transform.position;
+            //used for dynamic obstacles - checks if waypoint's transform has changed and updates destination to its new position
             if (currentWaypoint.transform.hasChanged)
             {
                 agent.SetDestination(currentWaypoint.transform.position);

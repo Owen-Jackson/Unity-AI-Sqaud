@@ -16,7 +16,6 @@ public class WaypointDetector : MonoBehaviour {
     {
         if (other.tag == "Waypoint")
         {
-            Debug.Log("waypoint hit");
             if (!parent.nearbyPoints.Contains(other.gameObject))
             {
                 parent.nearbyPoints.Add(other.gameObject);
@@ -26,8 +25,7 @@ public class WaypointDetector : MonoBehaviour {
         if (isPlayerAlly)
         {
             if (other.tag == "Squad_Member" && other.gameObject.layer == LayerMask.NameToLayer("Enemy"))
-            {
-                Debug.Log("enemy nearby");
+            {                
                 if (!parent.nearbyEnemies.Contains(other.gameObject))
                 {
                     parent.nearbyEnemies.Add(other.gameObject);
@@ -38,7 +36,6 @@ public class WaypointDetector : MonoBehaviour {
         {
             if (other.tag == "Squad_Member" && other.gameObject.layer == LayerMask.NameToLayer("Player_Ally"))
             {
-                Debug.Log("enemy nearby");
                 if (!parent.nearbyEnemies.Contains(other.gameObject))
                 {
                     parent.nearbyEnemies.Add(other.gameObject);
@@ -80,4 +77,30 @@ public class WaypointDetector : MonoBehaviour {
             }
         }
     }
+
+    /*
+    private void OnTriggerStay(Collider other)
+    {
+        if (isPlayerAlly)
+        {
+            if (other.tag == "Squad_Member" && other.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+            {
+                if (!parent.nearbyEnemies.Contains(other.gameObject))
+                {
+                    parent.nearbyEnemies.Add(other.gameObject);
+                }
+            }
+        }
+        else
+        {
+            if (other.tag == "Squad_Member" && other.gameObject.layer == LayerMask.NameToLayer("Player_Ally"))
+            {
+                if (!parent.nearbyEnemies.Contains(other.gameObject))
+                {
+                    parent.nearbyEnemies.Add(other.gameObject);
+                }
+            }
+        }
+        
+    }*/
 }

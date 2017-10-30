@@ -41,10 +41,9 @@ GameObject:
   - component: {fileID: 23306579320485608}
   - component: {fileID: 114569773142219724}
   - component: {fileID: 195710349846522006}
-  - component: {fileID: 208473606869401522}
   - component: {fileID: 54073514802153860}
-  m_Layer: 10
-  m_Name: AI_Enemy
+  m_Layer: 11
+  m_Name: AI_Squad_Member_v3
   m_TagString: Squad_Member
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -70,7 +69,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1922655625758936}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 7.506057, y: 2.87, z: 5.15}
+  m_LocalPosition: {x: 5.7223535, y: 0.75, z: 11.905791}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4515380220894616}
@@ -90,7 +89,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: d51b66bb021fbb344bee6eb06f2a63f5, type: 2}
+  - {fileID: 2100000, guid: 3bd32fe9429e30b43a239098b8e4abfb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -143,7 +142,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parent: {fileID: 0}
-  isPlayerAlly: 0
+  isPlayerAlly: 1
 --- !u!114 &114569773142219724
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -164,9 +163,7 @@ MonoBehaviour:
   scoresList: []
   currentIndex: 0
   agent: {fileID: 0}
-  obst: {fileID: 0}
   distFromCentre: 0
-  target: {x: 0, y: 0, z: 0}
 --- !u!135 &135159060690246332
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -213,18 +210,3 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!208 &208473606869401522
-NavMeshObstacle:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1922655625758936}
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Shape: 0
-  m_Extents: {x: 0.5, y: 1, z: 0.5}
-  m_MoveThreshold: 0.1
-  m_Carve: 1
-  m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: 0, z: 0}
-  m_TimeToStationary: 0.1
