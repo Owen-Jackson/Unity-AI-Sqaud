@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class WaypointDetector : MonoBehaviour {
-    public AI_Member parent;
-    public bool isPlayerAlly;
+    private AI_Member parent;
+    [SerializeField]
+    private bool isPlayerAlly;
 
     void Start()
     {

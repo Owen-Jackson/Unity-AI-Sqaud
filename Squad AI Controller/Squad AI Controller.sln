@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2017
+# Visual Studio 2015
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Squad AI Controller", "Squad AI Controller.csproj", "{09DB9D3A-64CA-1573-C316-BBA7D4D6DA49}"
 EndProject
 Global

@@ -38,6 +38,7 @@ public class Waypoint : MonoBehaviour {
         myLink.autoUpdatePositions = true;
 	}
 
+    //return a score based on which side the NPC is on
     public float GetScore(string affinity)
     {
         if(affinity == "Enemy")
@@ -51,6 +52,7 @@ public class Waypoint : MonoBehaviour {
         return 0f;
     }
 
+    //check how many enemies are around
     private float ThreatEvaluation(LayerMask layer)
     {
         float score = 0;
@@ -75,6 +77,7 @@ public class Waypoint : MonoBehaviour {
         return score;
     }
 
+    //check distance to player ally units
     private float FriendlyCheck(LayerMask layer)
     {
         float score = 0;
@@ -93,6 +96,7 @@ public class Waypoint : MonoBehaviour {
 
     private void Update()
     {
+        //update my scores for each side
         allyScore = ThreatEvaluation(LayerMask.NameToLayer("Enemy"));
         allyScore += FriendlyCheck(LayerMask.NameToLayer("Player_Ally"));
         enemyScore = ThreatEvaluation(LayerMask.NameToLayer("Player_Ally"));

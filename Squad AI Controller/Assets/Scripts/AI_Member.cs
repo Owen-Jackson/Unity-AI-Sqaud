@@ -15,16 +15,13 @@ public class AI_Member : MonoBehaviour {
     public NavMeshAgent agent;
     public float distFromCentre = 0;
     private List<GameObject> waypoints = null;
-    private bool commanded = false;
-    private float commandTimer = 0;
-    private float autoTimer = 0;
-    //public Vector3 target;
-
+    private bool commanded = false; //is the unit currently commanded?
+    private float commandTimer = 0; //time since the last command was issued. resets the AI when the player stop issuing commands
+    private float autoTimer = 0;    //countdown to when they next move on their own
 
     // Use this for initialization
     void Start() {
         myController = transform.parent.GetComponent<Squad_Controller>();
-        //nearbyPoints = new List<GameObject>();
         nearbyEnemies = new List<GameObject>();
         scoresList = new List<float>();
         agent = GetComponent<NavMeshAgent>();
@@ -42,6 +39,16 @@ public class AI_Member : MonoBehaviour {
         dest.GetComponent<Waypoint>().owner = this.gameObject;
     }
 
+    public void MoveTo(Vector3 dest)
+    {
+        if (currentWaypoint)
+        {
+            currentWaypoint.GetComponent<Waypoint>().SetTaken(false);
+        }
+        currentWaypoint = null;
+        agent.destination = dest;
+    }
+
     public void MoveCommand(List<GameObject> points)
     {
         autoTimer = 0;
@@ -52,16 +59,6 @@ public class AI_Member : MonoBehaviour {
         currentWaypoint.GetComponent<Waypoint>().owner = this.gameObject;
         commanded = true;
         commandTimer = 0;
-    }
-
-    public void MoveTo(Vector3 dest)
-    {
-        if (currentWaypoint)
-        {
-            currentWaypoint.GetComponent<Waypoint>().SetTaken(false);
-        }
-        currentWaypoint = null;
-        agent.destination = dest;
     }
 
     //Used when checking for nearby points to move to
@@ -88,7 +85,6 @@ public class AI_Member : MonoBehaviour {
                 }
 
                 //General Threat Check
-
                 count++;
             }
         }
@@ -150,6 +146,7 @@ public class AI_Member : MonoBehaviour {
         return score;
     }
 
+    //add a score to the waypoint if it is out of sight from enemies
     float LineOfSightEvaluation(GameObject waypoint)
     {
         float score = 0;
@@ -182,7 +179,8 @@ public class AI_Member : MonoBehaviour {
             else if(DistanceFromDest() < 1f)
             {
                 commanded = false;
-                Debug.Log("arrived");
+                commandTimer = 0;
+                //Debug.Log("arrived");
             }
         }
         else
@@ -194,18 +192,6 @@ public class AI_Member : MonoBehaviour {
                 MoveToNextBest();
             }
         }
-        /*
-        if(scoresList.Count > 0)
-        {
-            int bestInd = 0;
-            for (int i = 0; i < scoresList.Count - 1; i++)
-            {
-                if (scoresList[i + 1] > scoresList[i])
-                {
-                    bestInd = i + 1;
-                }
-            }
-        }*/
 
         if (currentWaypoint)
         {

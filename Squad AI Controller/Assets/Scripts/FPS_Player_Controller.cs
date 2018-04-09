@@ -44,7 +44,7 @@ public class FPS_Player_Controller : MonoBehaviour {
                         target = Instantiate(Resources.Load("Prefabs/Marker"), hit.point, Quaternion.identity) as GameObject;
                     }
                     mySquad.MoveSquad(hit.point);
-                    Debug.Log("send to point");
+                    //Debug.Log("send to point");
                 }
             }
         }
@@ -57,7 +57,7 @@ public class FPS_Player_Controller : MonoBehaviour {
         {
             Cursor.lockState = CursorLockMode.None;
         }
-        if(Input.GetKeyDown("r"))
+        if(Input.GetMouseButtonDown(0))
         {
             MoveHereCommand();
         }

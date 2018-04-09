@@ -32,7 +32,7 @@ public class CoverCreate : MonoBehaviour
             }
 
         }
-        Debug.Log(levelObjects.Count + " cover objects in level");
+        //Debug.Log(levelObjects.Count + " cover objects in level");
     }
 
     //2nd attempt at point generation
@@ -56,7 +56,6 @@ public class CoverCreate : MonoBehaviour
         Vector3 min = obj.transform.position - (right * (obj.transform.localScale.x / 2)) - (forw * (obj.transform.localScale.z / 2)) - right / 2 - forw / 2;
         Vector3 max = obj.transform.position + (right * (obj.transform.localScale.x / 2)) + (forw * (obj.transform.localScale.z / 2)) + right / 2 + forw / 2;
         Vector3 bottomLeft = min;
-        Vector3 topRight = max;
         Vector3 topLeft = min + (forw * (obj.transform.localScale.z)) + forw;
         Vector3 bottomRight = max - (forw * (obj.transform.localScale.z)) - forw;
         Debug.DrawLine(min, max, Color.cyan, 10f);
