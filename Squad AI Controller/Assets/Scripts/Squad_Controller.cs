@@ -50,7 +50,10 @@ public class Squad_Controller : MonoBehaviour {
             */
 
             //get all waypoints in the scene
-            points = new List<GameObject>(GameObject.FindGameObjectsWithTag("Waypoint"));
+            if (points.Count == 0)
+            {
+                points = new List<GameObject>(GameObject.FindGameObjectsWithTag("Waypoint"));
+            }
             
             //sort points in order of closest to the commanded position
             if (points.Count> 0)
