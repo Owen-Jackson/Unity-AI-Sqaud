@@ -58,7 +58,7 @@ public class CoverCreate : MonoBehaviour
         Vector3 bottomLeft = min;
         Vector3 topLeft = min + (forw * (obj.transform.localScale.z)) + forw;
         Vector3 bottomRight = max - (forw * (obj.transform.localScale.z)) - forw;
-        Debug.DrawLine(min, max, Color.cyan, 10f);
+        //Debug.DrawLine(min, max, Color.cyan, 10f);
         Vector3 pos = min;
         NavMeshHit navHit;
         RaycastHit rayHit;
